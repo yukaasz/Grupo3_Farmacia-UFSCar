@@ -9,7 +9,7 @@ CREATE TABLE Produto (
 	ID_Produto			 SERIAL PRIMARY KEY,
     nome		  		 varchar(100) NOT NULL,
 	quantidade			 int NOT NULL,
-    preco	             NUMERIC(10, 2) NOT NULL,
+    preco_unitario	     NUMERIC(10, 2) NOT NULL,
 	validade			 date NOT NULL
 );
 
@@ -22,8 +22,8 @@ CREATE TABLE Venda (
 	ID_Venda			 SERIAL PRIMARY KEY,
     produto		  		 int NOT NULL,
 	quantidade			 int NOT NULL,
-    preco	             NUMERIC(10, 2) NOT NULL,
-	date_hora			 TIMESTAMP NOT NULL,
+    preco_total	         NUMERIC(10, 2),
+	date_hora			 TIMESTAMP,
 	FOREIGN KEY(produto) REFERENCES Produto(ID_Produto)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
@@ -33,9 +33,7 @@ CREATE TABLE Historico (
 	ID_Transacao		 SERIAL PRIMARY KEY,
     produto		  		 int NOT NULL,
 	quantidade			 int NOT NULL,
-	date_hora			 TIMESTAMP NOT NULL,
-    tipo				 varchar(100) NOT NULL,
-	FOREIGN KEY(produto) REFERENCES Produto(ID_Produto)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+	date_hora			 TIMESTAMP,
+    tipo				 varchar(100) NOT NULL
 );
+
