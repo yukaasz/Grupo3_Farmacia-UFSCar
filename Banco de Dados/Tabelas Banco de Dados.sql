@@ -2,7 +2,7 @@ CREATE TABLE Usuario (
 	CPF			  		VARCHAR(11) PRIMARY KEY, CONSTRAINT cpf_valido CHECK (CPF ~ '^[0-9]{11}$'),
     nome		  		varchar(100) NOT NULL,
     cargo	            varchar(100) NOT NULL,
-	telefone			varchar(14)
+	senha				varchar(50)
 );
 
 CREATE TABLE Produto (
@@ -16,7 +16,7 @@ CREATE TABLE Produto (
 CREATE TABLE Medicamento (
     dosagem		  		 varchar(100) NOT NULL,
 	composto_ativo		 varchar(100) NOT NULL
-)INHERITS (Produto);
+) INHERITS (Produto);
 
 CREATE TABLE Venda (
 	ID_Venda			 SERIAL PRIMARY KEY,
