@@ -57,14 +57,69 @@ app.post('/usuarios', async (req, res) => {
     }
 });
 
+// Rota para cadastrar um novo produto
+app.post('/produtos', async (req, res) => {
+    const { nome, quantidade, preco_unitario, validade, dosagem, composto_ativo, radio } = req.body;
+
+    // Validação de campos obrigatórios
+    if (!nome || !preco_unitario || !validade || !quantidade) {
+        return res.status(400).json({ error: 'Nome, Preço, Validade e Quantidade são obrigatórios!' });
+    }
+
+    if (radio == "medicamento"){
+        try {
+            // Inserir o produto no banco de dados
+            const result = await pool.query(
+                'INSERT INTO medicamento (nome, quantidade, preco_unitario, validade, dosagem, composto_ativo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                [nome, quantidade, preco_unitario, validade, dosagem, composto_ativo]
+            );
+
+            const novoMedicamento = result.rows[0];
+            res.status(201).json(novoMedicamento); // Retorna o produto cadastrado
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erro ao cadastrar o medicamento!' });
+        }
+    }
+
+    else if (radio == "produto"){
+        try {
+            // Inserir o produto no banco de dados
+            const result = await pool.query(
+                'INSERT INTO produto (nome, quantidade, preco_unitario, validade) VALUES ($1, $2, $3, $4) RETURNING *',
+                [nome, quantidade, preco_unitario, validade]
+            );
+
+            const novoProduto = result.rows[0];
+            res.status(201).json(novoProduto); // Retorna o produto cadastrado
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erro ao cadastrar o produto!' });
+        }
+    }
+
+});
+
 // Rota para listar usuários
 app.get('/usuarios', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM usuario'); // Ajuste se sua tabela for "usuarios"
+        const result = await pool.query('SELECT * FROM usuario'); 
         res.status(200).json(result.rows.map(({ cpf, nome, cargo }) => ({ cpf, nome, cargo }))); // Retorna todos os usuários como JSON
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Erro ao buscar usuários!' });
+    }
+});
+
+
+// Rota para listar todos os produtos
+app.get('/produtos', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM produto');
+        res.status(200).json(result.rows.map(({ nome, quantidade, preco_unitario, validade }) => ({ nome, quantidade, preco_unitario, validade }))); // Retorna todos os produtos como JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar os produtos!' });
     }
 });
 

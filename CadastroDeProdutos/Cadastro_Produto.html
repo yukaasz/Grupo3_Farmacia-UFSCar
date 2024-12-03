@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produto</title>
+    <link rel="stylesheet" href="../CadastroDeUsuario/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cadastro de Produto</h1>
+        <form id="cadastroProdutoForm">
+            <p>Deseja inserir medicamento ou produto?</p>
+            <div class="div_med_prod">
+                <input type="radio" class="radio" id="radio_medicamento" name="radio" value="medicamento" required>
+                <label for="radio_medicamento" class="radio_label">Medicamento</label>
+            </div>
+            <div  class="div_med_prod">
+                <input type="radio" class="radio" id="radio_produto" name="radio" value="produto" required>
+                <label for="radio_produto" class="radio_label">Produto</label>
+            </div>
+
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="composto_ativo">Principal composto ativo:</label>
+            <input type="text" id="composto_ativo" name="composto_ativo" placeholder="Nenhum">
+
+            <label for="preco_unitario">Preço Unitário:</label>
+            <input type="number" step="0.01" id="preco_unitario" name="preco_unitario" required>
+
+            <label for="dosagem">Dosagem:</label>
+            <div class="div_dosagem">
+                <input type="number" id="dosagem_numero" name="dosagem_numero" placeholder="Nenhuma">
+                <select name="dosagem_unidade" id="dosagem_unidade">
+                    <option value="nenhuma">Nenhuma</option>
+                    <option value="mcg">Microgramas (mcg)</option>
+                    <option value="mg">Miligramas (mg)</option>
+                    <option value="g">Gramas (g)</option>
+                    <option value="ui">Unidades Internacionais (UI)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="%">Porcentagem (%)</option>
+                </select>
+            </div>
+
+            <label for="validade">Validade:</label>
+            <input type="date" id="validade" name="validade" required>
+
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" name="quantidade" required>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+    <script src="scriptProduto.js"></script>
+</body>
+</html>

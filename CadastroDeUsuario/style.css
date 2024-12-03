@@ -13,7 +13,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 600px;
 }
 
 form {
@@ -26,6 +26,32 @@ label {
 }
 
 input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.radio {
+    margin: 0;
+    padding: 0;
+}
+
+.radio_label {
+    margin-left: 10px;
+}
+
+.div_dosagem, .div_med_prod {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#dosagem_numero, #dosagem_unidade {
+    width: 100%;
+}
+
+select {
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;

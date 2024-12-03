@@ -1,4 +1,4 @@
-document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
+document.getElementById('cadastroUsuarioForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const cpf = document.getElementById('cpf').value;

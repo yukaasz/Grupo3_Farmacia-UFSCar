@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Cadastro de Usuário</h1>
-        <form id="cadastroForm">
+        <form id="cadastroUsuarioForm">
             <label for="cpf">CPF:</label>
             <input type="text" id="cpf" name="cpf" maxlength="11" required>
 
@@ -17,7 +17,12 @@
             <input type="text" id="nome" name="nome" required>
 
             <label for="cargo">Cargo:</label>
-            <input type="text" id="cargo" name="cargo" required>
+            <select name="cargo" id="cargo">
+                <option value="" disabled selected>Selecionar</option>
+                <option value="gerente">Gerente</option>
+                <option value="operador_caixa">Operador de Caixa</option>
+                <option value="farmaceutico">Farmacêutico</option>
+            </select>
 
             <label for="senha">Senha:</label>
             <input type="password" id="senha" name="senha">
@@ -25,6 +30,6 @@
             <button type="submit">Cadastrar</button>
         </form>
     </div>
-    <script src="script.js"></script>
+    <script src="scriptUsuario.js"></script>
 </body>
 </html>
