@@ -9,10 +9,10 @@ app.use(cors());  // Habilita CORS para aceitar requisições do frontend
 
 // Configuração da conexão com o banco de dados PostgreSQL
 const pool = new Pool({
-    user: 'postgres',  // Substitua pelo seu usuário do banco
+    user: 'postgres',  
     host: 'localhost',
-    database: 'Farmacia_UFSCar',  // Substitua pelo nome do seu banco de dados
-    password: '03042004',  // Substitua pela sua senha
+    database: 'Farmacia_UFSCar',  
+    password: '03042004',  
     port: 5432,
 });
 
