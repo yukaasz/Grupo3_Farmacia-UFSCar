@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Transações</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eeaff2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            overflow-x: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(156, 29, 156);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgb(156, 29, 156);
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Histórico de Transações</h1>
+        <table id="historicoTable">
+            <thead>
+                <tr>
+                    <th>ID Transação</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Data e Hora</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados serão preenchidos dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function carregarHistorico() {
+            try {
+                const resposta = await fetch('http://localhost:8080/historico');
+                if (!resposta.ok) {
+                    throw new Error('Erro ao buscar o histórico do banco de dados');
+                }
+
+                const historico = await resposta.json();
+                const tbody = document.querySelector('#historicoTable tbody');
+
+                // Preencher os dados na tabela
+                historico.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.id_transacao}</td>
+                        <td>${item.nome_produto || 'Produto Removido'}</td>
+                        <td>${item.quantidade}</td>
+                        <td>${new Date(item.date_hora).toLocaleString()}</td>
+                        <td>${item.tipo}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (erro) {
+                console.error('Erro ao carregar o histórico:', erro);
+                alert('Erro ao carregar o histórico. Por favor, tente novamente mais tarde.');
+            }
+        }
+
+        // Carrega o histórico ao abrir a página
+        carregarHistorico();
+    </script>
+</body>
+</html>

@@ -123,6 +123,21 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
+app.get('/historico', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT h.id_transacao, h.produto, p.nome AS nome_produto, h.quantidade, h.date_hora, h.tipo
+            FROM historico h
+            JOIN produto p ON h.produto = p.id_produto
+            ORDER BY h.date_hora DESC
+        `);
+        res.status(200).json(result.rows); // Retorna os dados no formato JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar o histórico!' });
+    }
+});
+
 // Iniciar o servidor na porta 3000
 app.listen(8080, () => {
     console.log('Servidor rodando na porta 8080');
