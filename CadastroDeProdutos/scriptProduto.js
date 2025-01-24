@@ -39,3 +39,4 @@ document.getElementById('cadastroProdutoForm').addEventListener('submit', async 
         alert('Erro ao cadastrar produto!');
     }
 });
+
