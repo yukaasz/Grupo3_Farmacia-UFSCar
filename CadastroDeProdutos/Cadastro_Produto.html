@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="../CadastroDeUsuario/styleUsuario.css">
 </head>
 <body>
+    <script src="scriptProduto.js"></script>
     <div class="container">
         <h1>Cadastro de Produto</h1>
-        <form id="cadastroProdutoForm">
+        <form id="cadastroProdutoForm" onsubmit="return cadastrarProduto(event);">
             <p>Deseja inserir medicamento ou produto?</p>
             <div class="div_med_prod">
                 <input type="radio" class="radio" id="radio_medicamento" name="radio" value="medicamento" required>
@@ -53,6 +54,5 @@
         </form>
         
     </div>
-    <script src="scriptProduto.js"></script>
 </body>
 </html>

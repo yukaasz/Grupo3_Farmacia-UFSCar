@@ -1,269 +1,109 @@
-
-// const { JSDOM } = require('jsdom');
-
-// describe('Cadastro de Usuário', () => {
-//     let dom;
-//     let document;
-
-//     beforeEach(() => {
-//         dom = new JSDOM(`
-//             <!DOCTYPE html>
-//             <html>
-//                 <body>
-//                     <form id="cadastroUsuarioForm">
-//                         <input id="cpf" value="12345678900" />
-//                         <input id="nome" value="João Silva" />
-//                         <input id="cargo" value="Gerente" />
-//                         <input id="senha" value="123456" />
-//                         <button type="submit">Cadastrar</button>
-//                     </form>
-//                 </body>
-//             </html>
-//         `);
-
-//         document = dom.window.document;
-//         global.document = document;
-//         global.window = dom.window;
-
-//         global.fetch = jest.fn();
-//         global.alert = jest.fn();
-
-//         // Importa o script
-//         require('../CadastroDeUsuario/scriptUsuario'); // Substitua pelo caminho correto
-//     });
-
-//     afterEach(() => {
-//         jest.clearAllMocks();
-//     });
-
-//     it('deve cadastrar o usuário com sucesso', async () => {
-//         global.fetch.mockResolvedValueOnce({ ok: true });
-
-//         const form = document.getElementById('cadastroUsuarioForm');
-//         await form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-
-//         await new Promise(process.nextTick);
-
-//         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 cpf: '12345678900',
-//                 nome: 'João Silva',
-//                 cargo: 'Gerente',
-//                 senha: '123456',
-//             }),
-//         });
-//         expect(global.alert).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
-//     });
-
-//     it('deve exibir uma mensagem de erro ao falhar no cadastro', async () => {
-//         global.fetch.mockResolvedValueOnce({ ok: false });
-
-//         const form = document.getElementById('cadastroUsuarioForm');
-//         await form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-
-//         await new Promise(process.nextTick);
-
-//         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 cpf: '12345678900',
-//                 nome: 'João Silva',
-//                 cargo: 'Gerente',
-//                 senha: '123456',
-//             }),
-//         });
-//         expect(global.alert).toHaveBeenCalledWith('Erro ao cadastrar usuário!');
-//     });
-// });
-
-// describe('Cadastro de Usuário', () => {
-//     let dom;
-//     let document;
-
-//     beforeEach(() => {
-//         dom = new JSDOM(`
-//             <!DOCTYPE html>
-//             <html>
-//                 <body>
-//                     <form id="cadastroUsuarioForm">
-//                         <input id="cpf" value="12345678900" />
-//                         <input id="nome" value="João Silva" />
-//                         <select id="cargo">
-//                             <option value="gerente" selected>Gerente</option>
-//                             <option value="operador_caixa">Operador de Caixa</option>
-//                             <option value="farmaceutico">Farmacêutico</option>
-//                         </select>
-//                         <input id="senha" value="123456" />
-//                         <button type="submit">Cadastrar</button>
-//                     </form>
-//                 </body>
-//             </html>
-//         `);
-
-//         document = dom.window.document;
-//         global.document = document;
-//         global.window = dom.window;
-
-//         global.fetch = jest.fn();
-//         global.alert = jest.fn();
-
-//         require('../CadastroDeUsuario/scriptUsuario'); // Ajuste o caminho conforme necessário
-//         document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
-//     });
-
-//     afterEach(() => {
-//         jest.clearAllMocks();
-//     });
-
-//     it('deve cadastrar o usuário com sucesso', async () => {
-//         global.fetch.mockResolvedValueOnce({
-//             ok: true,
-//             json: jest.fn().mockResolvedValue({}),
-//         });
-        
-//         const form = document.getElementById('cadastroUsuarioForm');
-//         form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-        
-//         await flushPromises(); 
-        
-//         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 cpf: '12345678900',
-//                 nome: 'João Silva',
-//                 cargo: 'gerente',
-//                 senha: '123456',
-//             }),
-//         });
-//         expect(global.alert).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
-//     });
-
-//     it('deve exibir uma mensagem de erro ao falhar no cadastro', async () => {
-//         global.fetch.mockResolvedValueOnce({
-//             ok: false,
-//             json: jest.fn().mockResolvedValue({ error: 'Falha no cadastro' }),
-//         });
-    
-//         const form = document.getElementById('cadastroUsuarioForm');
-//         form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-        
-//         await flushPromises(); 
-        
-//         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 cpf: '12345678900',
-//                 nome: 'João Silva',
-//                 cargo: 'gerente',
-//                 senha: '123456',
-//             }),
-//         });
-//         expect(global.alert).toHaveBeenCalledWith('Erro ao cadastrar usuário!');
-//     });
-
-// });
-
-
-
 const { JSDOM } = require('jsdom');
 
-describe('Cadastro de Usuário', () => {
+// Mock global alert
+global.alert = jest.fn();
+
+const { cadastrarUsuario } = require('../CadastrodeUsuario/scriptUsuario');
+
+describe('Teste da função cadastrarUsuario', () => {
     let dom;
     let document;
 
-    // Função auxiliar para aguardar promessas
-    function flushPromises() {
-        return new Promise(resolve => setImmediate(resolve));
-    }
-
     beforeEach(() => {
+        // Configura um DOM virtual
         dom = new JSDOM(`
             <!DOCTYPE html>
-            <html>
-                <body>
-                    <form id="cadastroUsuarioForm">
-                        <input id="cpf" value="12345678900" />
-                        <input id="nome" value="João Silva" />
-                        <select id="cargo">
-                            <option value="gerente" selected>Gerente</option>
-                            <option value="operador_caixa">Operador de Caixa</option>
-                            <option value="farmaceutico">Farmacêutico</option>
-                        </select>
-                        <input id="senha" value="123456" />
-                        <button type="submit">Cadastrar</button>
-                    </form>
-                </body>
+            <html lang="pt-br">
+            <body>
+                <form id="cadastroUsuarioForm">
+                    <input type="text" id="cpf" value="12345678901" />
+                    <input type="text" id="nome" value="Fulano" />
+                    <select id="cargo">
+                        <option value="gerente" selected>Gerente</option>
+                    </select>
+                    <input type="password" id="senha" value="1234" />
+                    <button type="submit">Cadastrar</button>
+                </form>
+            </body>
             </html>
         `);
-
         document = dom.window.document;
         global.document = document;
         global.window = dom.window;
 
+        // Mock global fetch
         global.fetch = jest.fn();
-        global.alert = jest.fn();
 
-        require('../CadastroDeUsuario/scriptUsuario'); // Substitua pelo caminho correto
-        document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+        // Mock do console.error para evitar poluição do console
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    it('deve cadastrar o usuário com sucesso', async () => {
+    it('deve exibir uma mensagem de sucesso quando o cadastro for realizado com sucesso', async () => {
+        // Mock da resposta do fetch
         global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: jest.fn().mockResolvedValue({}), // Mock da resposta JSON
+            status: 200,
+            json: async () => ({}),
         });
-        
-        const form = document.getElementById('cadastroUsuarioForm');
-        form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-        
-        // Aguarda as promessas assíncronas
-        await flushPromises(); 
-        
+
+        const event = {
+            preventDefault: jest.fn(),
+        };
+
+        await cadastrarUsuario(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
-                cpf: '12345678900',
-                nome: 'João Silva',
+                cpf: '12345678901',
+                nome: 'Fulano',
                 cargo: 'gerente',
-                senha: '123456',
+                senha: '1234',
             }),
         });
         expect(global.alert).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
     });
 
-    it('deve exibir uma mensagem de erro ao falhar no cadastro', async () => {
+    it('deve exibir uma mensagem de erro quando o cadastro falhar', async () => {
+        // Mock da resposta do fetch com erro
         global.fetch.mockResolvedValueOnce({
             ok: false,
-            json: jest.fn().mockResolvedValue({ error: 'Falha no cadastro' }), // Mock da resposta JSON com erro
+            status: 400,
         });
-    
-        const form = document.getElementById('cadastroUsuarioForm');
-        form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-        
-        // Aguarda as promessas assíncronas
-        await flushPromises(); 
-        
-        expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/usuarios', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                cpf: '12345678900',
-                nome: 'João Silva',
-                cargo: 'gerente',
-                senha: '123456',
-            }),
-        });
+
+        const event = {
+            preventDefault: jest.fn(),
+        };
+
+        await cadastrarUsuario(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(global.fetch).toHaveBeenCalled();
         expect(global.alert).toHaveBeenCalledWith('Erro ao cadastrar usuário!');
     });
 
+    it('deve exibir uma mensagem de erro inesperado em caso de exceção', async () => {
+        // Mock de erro no fetch
+        global.fetch.mockRejectedValueOnce(new Error('Erro inesperado'));
+
+        const event = {
+            preventDefault: jest.fn(),
+        };
+
+        await cadastrarUsuario(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(global.fetch).toHaveBeenCalled();
+        expect(global.alert).toHaveBeenCalledWith(
+            'Erro inesperado ao cadastrar o usuário. Verifique sua conexão e tente novamente.'
+        );
+    });
 });
