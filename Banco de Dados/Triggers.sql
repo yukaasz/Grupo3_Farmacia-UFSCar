@@ -17,7 +17,8 @@ BEGIN
 		END IF;
 	-- CALCULA E ATUALIZA O PREÇO TOTAL
 		UPDATE Venda 
-		SET preco_total = (SELECT preco_unitario FROM Produto WHERE ID_Produto = NEW.produto)*NEW.quantidade
+		SET preco_total = (SELECT preco_unitario FROM Produto WHERE ID_Produto = NEW.produto)*NEW.quantidade,
+		date_hora = NOW()
 		WHERE ID_Venda = NEW.ID_Venda;
 	-- ATUALIZA A QUANTIDADE DO PRODUTO NO ESTOQUE
 		UPDATE Produto
@@ -25,7 +26,7 @@ BEGIN
 		WHERE ID_produto = NEW.produto;
 	-- INSERE OPERAÇÃO NO HISTÓRICO	
 		INSERT INTO Historico(produto, quantidade, date_hora, tipo)
-		VALUES (NEW.produto, NEW.quantidade, NEW.date_hora, 'Saída'); -- "NEW.quantidade" é a qnt vendida e retirada de Produto
+		VALUES (NEW.produto, NEW.quantidade, NOW(), 'Saída'); -- "NEW.quantidade" é a qnt vendida e retirada de Produto
 -- DELETAR UMA VENDA (CASO TENHA ERRADO ALGO)
 	ELSEIF(TG_OP = 'DELETE') THEN
 	-- ATUALIZA A QUANTIDADE DO PRODUTO NO ESTOQUE

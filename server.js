@@ -114,12 +114,15 @@ app.get('/usuarios', async (req, res) => {
 
 // Rota para listar todos os produtos
 app.get('/produtos', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM produto');
-        res.status(200).json(result.rows.map(({ nome, quantidade, preco_unitario, validade }) => ({ nome, quantidade, preco_unitario, validade }))); // Retorna todos os produtos como JSON
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao buscar os produtos!' });
+    const nomeProduto = req.query.nome; // Pega o nome do produto da query string
+
+    // Busca o produto no banco de dados
+    const produto = await db.produtos.findOne({ where: { nome: nomeProduto } });
+
+    if (produto) {
+        res.json(produto); // Retorna os detalhes do produto
+    } else {
+        res.status(404).json({ mensagem: "Produto não encontrado" }); // Retorna erro se não encontrar
     }
 });
 
@@ -155,6 +158,87 @@ app.get('/controleEstoque', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar o controle de estoque!' });
     }
 });
+
+// Rota para processar uma venda
+// app.post('/vendas', async (req, res) => {
+//     const { produto, quantidade } = req.body;
+
+//     if (!produto || !quantidade || quantidade <= 0) {
+//         return res.status(400).json({ error: 'Produto e quantidade válidos são obrigatórios!' });
+//     }
+
+//     try {
+//         // Verifica se o produto existe e tem quantidade suficiente
+//         const produtoResult = await pool.query('SELECT * FROM produto WHERE nome = $1', [produto]);
+
+//         if (produtoResult.rows.length === 0) {
+//             return res.status(404).json({ error: 'Produto não encontrado!' });
+//         }
+
+//         const produtoData = produtoResult.rows[0];
+//         if (produtoData.quantidade < quantidade) {
+//             return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
+//         }
+
+//         // Registra a venda
+//         const vendaResult = await pool.query(
+//             'INSERT INTO venda (produto, quantidade) VALUES ($1, $2) RETURNING *',
+//             [produto, quantidade]
+//         );
+
+//         res.status(201).json(vendaResult.rows[0]);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Erro ao processar a venda!' });
+//     }
+// });
+
+// Rota para processar uma venda
+app.post('/vendas', async (req, res) => {
+    const { produtoId, quantidade } = req.body;
+    const quantidadeInt = parseInt(quantidade, 10);
+
+    if (!produtoId || !quantidadeInt || quantidadeInt <= 0) {
+        return res.status(400).json({ error: 'Produto ID e quantidade válidos são obrigatórios!' });
+    }
+
+    try {
+        // Verifica se o produto existe e tem quantidade suficiente
+        const produtoResult = await pool.query('SELECT * FROM produto WHERE id_produto = $1', [produtoId]);
+
+        if (produtoResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado!' });
+        }
+
+        const produtoData = produtoResult.rows[0];
+        if (produtoData.quantidadeInt < quantidadeInt) {
+            return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
+        }
+        // Registra a venda
+        const vendaResult = await pool.query(
+            'INSERT INTO venda (produto, quantidade) VALUES ($1, $2) RETURNING *',
+            [produtoId, quantidadeInt]
+        );
+
+        res.status(201).json(vendaResult.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao processar a venda!' });
+    }
+});
+
+
+// Rota para listar todos os produtos
+app.get('/vendas', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT p.id_produto, p.nome, p.quantidade, p.preco_unitario, p.validade, m.dosagem, m.composto_ativo FROM medicamento m right join produto p ON m.id_produto = p.id_produto ORDER BY p.nome;');
+        res.status(200).json(result.rows); // Retorna todos os produtos como JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar os produtos!' });
+    }
+});
+
 
 // Iniciar o servidor na porta 8080
 app.listen(8080, () => {
