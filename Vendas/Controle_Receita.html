@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Vendas Mensal</title>
+    <link rel="stylesheet" href="styleReceita.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Controle de Vendas Mensal</h1>
+        <div class="filtro">
+            <label for="mes">Mês:</label>
+            <select id="mes">
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <option value="4">Abril</option>
+                <option value="5">Maio</option>
+                <option value="6">Junho</option>
+                <option value="7">Julho</option>
+                <option value="8">Agosto</option>
+                <option value="9">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+            </select>
+            <label for="ano">Ano:</label>
+            <input type="number" id="ano" min="2000" max="2100" value="2025">
+            <button onclick="buscarVendas()">Buscar</button>
+        </div>
+        <div class="total">
+            <strong>Total Vendido: R$ <span id="totalVendido">0.00</span></strong>
+        </div>
+        <table id="vendasTable">
+            <thead>
+                <tr>
+                    <th>ID Produto</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Preço Unitário</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- As linhas da tabela serão preenchidas dinamicamente pelo JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script src="scriptReceita.js"></script>
+</body>
+</html>

@@ -198,6 +198,7 @@ app.post('/vendas', async (req, res) => {
     const { produtoId, quantidade } = req.body;
     const quantidadeInt = parseInt(quantidade, 10);
 
+
     if (!produtoId || !quantidadeInt || quantidadeInt <= 0) {
         return res.status(400).json({ error: 'Produto ID e quantidade válidos são obrigatórios!' });
     }
@@ -236,6 +237,76 @@ app.get('/vendas', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Erro ao buscar os produtos!' });
+    }
+});
+
+// Rota para o controle de receita
+// app.get('/receitamensal', async (req, res) => {
+//     const { mes, ano } = req.query;
+
+//     if (!mes || !ano) {
+//         return res.status(400).json({ error: 'Mês e ano são obrigatórios!' });
+//     }
+
+//     try {
+//         // Consulta para buscar as vendas no mês e ano especificados
+//         const result = await pool.query(
+//             `SELECT p.id_produto, p.nome AS produto, v.quantidade, v.date_hora, p.preco_unitario
+//              FROM venda v
+//              JOIN produto p ON v.produto = p.id_produto
+//              WHERE EXTRACT(MONTH FROM v.date_hora) = $1 AND EXTRACT(YEAR FROM v.date_hora) = $2`,
+//             [mes, ano]
+//         );
+
+//         // Calcular o valor total vendido
+//         let totalVendido = 0;
+//         result.rows.forEach((venda) => {
+//             totalVendido += venda.quantidade * venda.preco_unitario;
+//         });
+
+//         // Retornar os dados das vendas e o total vendido
+//         res.status(200).json({
+//             vendas: result.rows,
+//             totalVendido: totalVendido.toFixed(2),
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Erro ao buscar as vendas!' });
+//     }
+// });
+app.get('/receitamensal', async (req, res) => {
+    const { mes, ano } = req.query;
+
+    if (!mes || !ano) {
+        return res.status(400).json({ error: 'Mês e ano são obrigatórios!' });
+    }
+
+    try {
+        // Consulta para buscar as vendas agrupadas por produto
+        const result = await pool.query(
+            `SELECT p.id_produto, p.nome AS produto, SUM(v.quantidade) AS total_quantidade, p.preco_unitario
+             FROM venda v
+             JOIN produto p ON v.produto = p.id_produto
+             WHERE EXTRACT(MONTH FROM v.date_hora) = $1 AND EXTRACT(YEAR FROM v.date_hora) = $2
+             GROUP BY p.id_produto, p.nome, p.preco_unitario`,
+            [mes, ano]
+        );
+
+        // Calcular o valor total vendido por produto
+        let totalVendido = 0;
+        result.rows.forEach((venda) => {
+            venda.total_vendido = venda.total_quantidade * venda.preco_unitario;
+            totalVendido += venda.total_vendido;
+        });
+
+        // Retornar os dados das vendas agrupadas e o total vendido
+        res.status(200).json({
+            vendas: result.rows,
+            totalVendido: totalVendido.toFixed(2),
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar as vendas!' });
     }
 });
 

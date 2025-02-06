@@ -23,10 +23,7 @@ CREATE TABLE Venda (
     produto		  		 int NOT NULL,
 	quantidade			 int NOT NULL,
     preco_total	         NUMERIC(10, 2),
-	date_hora			 TIMESTAMP,
-	FOREIGN KEY(produto) REFERENCES Produto(ID_Produto)
-		ON UPDATE CASCADE
-		ON DELETE CASCADE
+	date_hora			 TIMESTAMP
 );
 
 CREATE TABLE Historico (

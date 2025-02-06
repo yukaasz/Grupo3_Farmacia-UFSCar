@@ -41,75 +41,6 @@ async function carregarProdutos() {
     }
 }
 
-// async function realizarVenda(e) {
-//     e.preventDefault(); // Evita o comportamento padrão do formulário
-
-//     try {
-//         const produto = document.getElementById("produto").value;
-//         const quantidade = document.getElementById("quantidade").value;
-
-//         const response = await fetch("http://localhost:8080/vendas", {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({ produto, quantidade }),
-//         });
-
-//         if (response.ok) {
-//             alert("Venda registrada com sucesso!");
-//         } else {
-//             alert("Erro ao registrar a venda!");
-//         }
-//     } catch (error) {
-//         alert("Erro inesperado ao registrar a venda. Verifique sua conexão e tente novamente.");
-//         console.error(error);
-//     }
-// }
-
-// async function realizarVenda(e) {
-//     e.preventDefault(); // Evita o comportamento padrão do formulário
-
-//     try {
-//         const produtoNome = document.getElementById("produto").value;
-//         const quantidade = document.getElementById("quantidade").value;
-
-//         // Primeiro, busca o ID do produto pelo nome
-//         const buscaProdutoResponse = await fetch(`http://localhost:8080/produtos?nome=${encodeURIComponent(produtoNome)}`);
-        
-//         if (!buscaProdutoResponse.ok) {
-//             alert("Erro ao buscar o produto!");
-//             return;
-//         }
-
-//         const produtoData = await buscaProdutoResponse.json();
-        
-//         if (!produtoData || produtoData.length === 0) {
-//             alert("Produto não encontrado!");
-//             return;
-//         }
-
-//         const produtoId = produtoData[0].id; // Assume que o primeiro resultado é o produto correto
-
-//         // Agora, processa a venda com o ID do produto
-//         const response = await fetch("http://localhost:8080/vendas", {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({ produtoId, quantidade }),
-//         });
-
-//         if (response.ok) {
-//             alert("Venda registrada com sucesso!");
-//         } else {
-//             alert("Erro ao registrar a venda!");
-//         }
-//     } catch (error) {
-//         alert("Erro inesperado ao registrar a venda. Verifique sua conexão e tente novamente.");
-//         console.error(error);
-//     }
-// }
 
 async function realizarVenda(e) {
     e.preventDefault(); // Evita o comportamento padrão do formulário
@@ -144,10 +75,8 @@ async function realizarVenda(e) {
     }
 }
 
-
-window.onload = carregarProdutos;
-
+if (typeof window !== "undefined") {
+    window.onload = carregarProdutos;
+}
 // Exporta a função para ser usada em outros arquivos
-module.exports = { realizarVenda };
-
-carregarProdutos();
+module.exports = { realizarVenda, carregarProdutos };   
