@@ -1,6 +1,8 @@
 const express = require('express');
 const { Pool } = require('pg');
+const bcrypt = require("bcrypt");
 const cors = require('cors'); 
+const jwt = require("jsonwebtoken");
 
 // Configuração do servidor Express
 const app = express();
@@ -12,7 +14,7 @@ const pool = new Pool({
     user: 'postgres',  
     host: 'localhost',
     database: 'Farmacia_UFSCar',  
-    password: '03042004',  
+    password: 'PREENCHER_SENHA_BD',
     port: 5432,
 });
 
@@ -27,7 +29,37 @@ const pool = new Pool({
 })();
 
 // Rota para cadastrar um novo usuário
-app.post('/usuarios', async (req, res) => {
+// app.post('/usuarios', verificarPermissao(["gerente"]), async (req, res) => {
+//     const { cpf, nome, cargo, senha } = req.body;
+
+//     // Verificar se os campos obrigatórios estão presentes
+//     if (!cpf || !nome || !cargo || !senha) {
+//         return res.status(400).json({ error: 'CPF, Nome, Cargo e Senha são obrigatórios!' });
+//     }
+
+//     try {
+//         // Verificar se o CPF já está registrado
+//         const checkCpf = await pool.query('SELECT * FROM usuario WHERE cpf = $1', [cpf]);
+
+//         if (checkCpf.rows.length > 0) {
+//             return res.status(400).json({ error: 'CPF já está cadastrado!' });
+//         }
+
+//         // Inserir o novo usuário no banco de dados
+//         const result = await pool.query(
+//             'INSERT INTO usuario (cpf, nome, cargo, senha) VALUES ($1, $2, $3, $4) RETURNING *',
+//             [cpf, nome, cargo, senha]
+//         );
+
+//         const novoUsuario = result.rows[0];
+//         return res.status(201).json(novoUsuario); // Retorna o novo usuário com status 201
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({ error: 'Erro ao cadastrar usuário!' });
+//     }
+// });
+
+app.post('/usuarios', autenticarUsuario, verificarPermissao(["gerente"]), async (req, res) => {
     const { cpf, nome, cargo, senha } = req.body;
 
     // Verificar se os campos obrigatórios estão presentes
@@ -43,10 +75,14 @@ app.post('/usuarios', async (req, res) => {
             return res.status(400).json({ error: 'CPF já está cadastrado!' });
         }
 
-        // Inserir o novo usuário no banco de dados
+        // Gerar o hash da senha antes de salvar no banco de dados
+        const saltRounds = 10;
+        const senhaHash = await bcrypt.hash(senha, saltRounds);
+
+        // Inserir o novo usuário no banco de dados com a senha criptografada
         const result = await pool.query(
             'INSERT INTO usuario (cpf, nome, cargo, senha) VALUES ($1, $2, $3, $4) RETURNING *',
-            [cpf, nome, cargo, senha]
+            [cpf, nome, cargo, senhaHash]
         );
 
         const novoUsuario = result.rows[0];
@@ -57,8 +93,52 @@ app.post('/usuarios', async (req, res) => {
     }
 });
 
+
+async function verificarLogin(cpf, senhaDigitada) {
+    try {
+        const query = "SELECT cpf, senha, cargo FROM usuario WHERE cpf = $1";
+        const resultado = await pool.query(query, [cpf]);
+
+        if (resultado.rows.length === 0) {
+            return { sucesso: false, mensagem: "Usuário não encontrado" };
+        }
+
+        const { senha, cargo } = resultado.rows[0];
+        const senhaCorreta = await bcrypt.compare(senhaDigitada, senha);
+
+        if (senhaCorreta) {
+            // Gerar token JWT
+            const token = jwt.sign({ cpf, cargo }, "seu_segredo_secreto", { expiresIn: "8h" });
+
+            return { sucesso: true, token };
+        } else {
+            return { sucesso: false, mensagem: "Senha incorreta" };
+        }
+    } catch (error) {
+        console.error("Erro ao verificar login:", error);
+        return { sucesso: false, mensagem: "Erro interno no servidor" };
+    }
+}
+
+app.post("/login", async (req, res) => {
+    const { cpf, senha } = req.body;
+
+    if (!cpf || !senha) {
+        return res.status(400).json({ error: "CPF e senha são obrigatórios!" });
+    }
+
+    const resultado = await verificarLogin(cpf, senha);
+
+    if (resultado.sucesso) {
+        res.status(200).json({ token: resultado.token });
+    } else {
+        res.status(401).json({ error: resultado.mensagem });
+    }
+});
+
+
 // Rota para cadastrar um novo produto
-app.post('/produtos', async (req, res) => {
+app.post('/produtos', autenticarUsuario, verificarPermissao(["farmaceutico", "gerente"]), async (req, res) => {
     const { nome, quantidade, preco_unitario, validade, dosagem, composto_ativo, radio } = req.body;
 
     // Validação de campos obrigatórios
@@ -100,33 +180,8 @@ app.post('/produtos', async (req, res) => {
 
 });
 
-// Rota para listar usuários
-app.get('/usuarios', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM usuario'); 
-        res.status(200).json(result.rows.map(({ cpf, nome, cargo }) => ({ cpf, nome, cargo }))); // Retorna todos os usuários como JSON
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao buscar usuários!' });
-    }
-});
 
-
-// Rota para listar todos os produtos
-app.get('/produtos', async (req, res) => {
-    const nomeProduto = req.query.nome; // Pega o nome do produto da query string
-
-    // Busca o produto no banco de dados
-    const produto = await db.produtos.findOne({ where: { nome: nomeProduto } });
-
-    if (produto) {
-        res.json(produto); // Retorna os detalhes do produto
-    } else {
-        res.status(404).json({ mensagem: "Produto não encontrado" }); // Retorna erro se não encontrar
-    }
-});
-
-app.get('/historico', async (req, res) => {
+app.get('/historico', autenticarUsuario, verificarPermissao(["gerente"]), async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT h.id_transacao, h.produto, p.nome AS nome_produto, h.quantidade, h.date_hora, h.tipo
@@ -142,7 +197,7 @@ app.get('/historico', async (req, res) => {
 });
 
 // Rota para listar o controle de estoque
-app.get('/controleEstoque', async (req, res) => {
+app.get('/controleEstoque', autenticarUsuario, verificarPermissao(["farmaceutico", "gerente"]), async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
@@ -160,41 +215,7 @@ app.get('/controleEstoque', async (req, res) => {
 });
 
 // Rota para processar uma venda
-// app.post('/vendas', async (req, res) => {
-//     const { produto, quantidade } = req.body;
-
-//     if (!produto || !quantidade || quantidade <= 0) {
-//         return res.status(400).json({ error: 'Produto e quantidade válidos são obrigatórios!' });
-//     }
-
-//     try {
-//         // Verifica se o produto existe e tem quantidade suficiente
-//         const produtoResult = await pool.query('SELECT * FROM produto WHERE nome = $1', [produto]);
-
-//         if (produtoResult.rows.length === 0) {
-//             return res.status(404).json({ error: 'Produto não encontrado!' });
-//         }
-
-//         const produtoData = produtoResult.rows[0];
-//         if (produtoData.quantidade < quantidade) {
-//             return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
-//         }
-
-//         // Registra a venda
-//         const vendaResult = await pool.query(
-//             'INSERT INTO venda (produto, quantidade) VALUES ($1, $2) RETURNING *',
-//             [produto, quantidade]
-//         );
-
-//         res.status(201).json(vendaResult.rows[0]);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ error: 'Erro ao processar a venda!' });
-//     }
-// });
-
-// Rota para processar uma venda
-app.post('/vendas', async (req, res) => {
+app.post('/vendas', autenticarUsuario, verificarPermissao(["operador", "gerente"]), async (req, res) => {
     const { produtoId, quantidade } = req.body;
     const quantidadeInt = parseInt(quantidade, 10);
 
@@ -240,41 +261,8 @@ app.get('/vendas', async (req, res) => {
     }
 });
 
-// Rota para o controle de receita
-// app.get('/receitamensal', async (req, res) => {
-//     const { mes, ano } = req.query;
 
-//     if (!mes || !ano) {
-//         return res.status(400).json({ error: 'Mês e ano são obrigatórios!' });
-//     }
-
-//     try {
-//         // Consulta para buscar as vendas no mês e ano especificados
-//         const result = await pool.query(
-//             `SELECT p.id_produto, p.nome AS produto, v.quantidade, v.date_hora, p.preco_unitario
-//              FROM venda v
-//              JOIN produto p ON v.produto = p.id_produto
-//              WHERE EXTRACT(MONTH FROM v.date_hora) = $1 AND EXTRACT(YEAR FROM v.date_hora) = $2`,
-//             [mes, ano]
-//         );
-
-//         // Calcular o valor total vendido
-//         let totalVendido = 0;
-//         result.rows.forEach((venda) => {
-//             totalVendido += venda.quantidade * venda.preco_unitario;
-//         });
-
-//         // Retornar os dados das vendas e o total vendido
-//         res.status(200).json({
-//             vendas: result.rows,
-//             totalVendido: totalVendido.toFixed(2),
-//         });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ error: 'Erro ao buscar as vendas!' });
-//     }
-// });
-app.get('/receitamensal', async (req, res) => {
+app.get('/receitamensal', autenticarUsuario, verificarPermissao(["gerente"]), async (req, res) => {
     const { mes, ano } = req.query;
 
     if (!mes || !ano) {
@@ -309,6 +297,32 @@ app.get('/receitamensal', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar as vendas!' });
     }
 });
+
+const autenticarUsuario = (req, res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ error: "Acesso não autorizado!" });
+    }
+
+    jwt.verify(token, "seu_segredo_secreto", (err, user) => {
+        if (err) return res.status(403).json({ error: "Token inválido!" });
+        req.user = user;  // Adiciona os dados do usuário à requisição
+        next();
+    });
+};
+
+// Middleware para verificar permissões
+const verificarPermissao = (cargosPermitidos) => {
+    return (req, res, next) => {
+        const { cargo } = req.user; // Pegando o cargo do usuário autenticado
+
+        if (!cargosPermitidos.includes(cargo)) {
+            return res.status(403).json({ error: "Acesso negado! Você não tem permissão para esta ação." });
+        }
+
+        next();
+    };
+};
 
 
 // Iniciar o servidor na porta 8080

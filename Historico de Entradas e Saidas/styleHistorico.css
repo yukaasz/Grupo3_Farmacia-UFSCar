@@ -1,26 +1,29 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #eeaff2;
+    background-color: #f4f4f9;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    margin-top: 140vh;
+    margin-top: 0;
 }
 
 .container {
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 800px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
     overflow-x: auto;
 }
 
 h1 {
     text-align: center;
     color: rgb(156, 29, 156);
+    font-size: 2rem;
+    margin-bottom: 20px;
 }
 
 table {
@@ -33,6 +36,7 @@ th, td {
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
+    font-size: 1rem;
 }
 
 th {

@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #eeaff2;
+    background-color: #f4f4f9;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,39 +10,62 @@ body {
 
 .container {
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 600px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+h1 {
+    color: rgb(156, 29, 156);
+    font-size: 2rem;
+    margin-bottom: 20px;
 }
 
 form {
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
 
 label {
-    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
 }
 
-input {
+input, select {
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: rgb(156, 29, 156);
+    box-shadow: 0 0 5px rgba(156, 29, 156, 0.5);
+    outline: none;
 }
 
 .radio {
-    margin: 0;
-    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
 }
 
 .radio_label {
-    margin-left: 10px;
+    margin: 0;
+    color: #333;
 }
 
 .div_dosagem, .div_med_prod {
     display: flex;
+    gap: 10px;
     align-items: center;
     width: 100%;
 }
@@ -51,22 +74,23 @@ input {
     width: 100%;
 }
 
-select {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
 button {
     background-color: rgb(156, 29, 156);
     color: #fff;
     border: none;
-    padding: 10px;
+    padding: 12px;
     border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: rgb(201, 42, 201);
+    background-color: rgb(136, 25, 136);
+}
+
+/* Adicionando ícones (opcional) */
+.icon {
+    margin-right: 10px;
+    color: rgb(156, 29, 156);
 }

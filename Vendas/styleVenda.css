@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    font-size: large;
-    background-color: #eeaff2;
+    background-color: #f4f4f9;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,47 +10,54 @@ body {
 
 .container {
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 600px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+}
+
+h1 {
+    color: rgb(156, 29, 156);
 }
 
 form {
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
 
 label {
-    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
 }
 
-input {
+input, select {
     padding: 10px;
-    margin-bottom: 50px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: large;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-select {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: large;
+input:focus, select:focus {
+    border-color: rgb(156, 29, 156);
+    box-shadow: 0 0 5px rgba(156, 29, 156, 0.5);
+    outline: none;
 }
 
 button {
     background-color: rgb(156, 29, 156);
     color: #fff;
     border: none;
-    padding: 10px;
+    padding: 12px;
     border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: large;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: rgb(201, 42, 201);
+    background-color: rgb(136, 25, 136);
 }
