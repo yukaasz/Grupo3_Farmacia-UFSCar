@@ -14,7 +14,7 @@ const pool = new Pool({
     user: 'postgres',  
     host: 'localhost',
     database: 'Farmacia_UFSCar',  
-    password: 'PREENCHER_SENHA_BD',
+    password: '03042004',
     port: 5432,
 });
 
@@ -27,6 +27,32 @@ const pool = new Pool({
         console.error('Erro ao conectar ao banco de dados:', err);
     }
 })();
+
+const autenticarUsuario = (req, res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ error: "Acesso não autorizado!" });
+    }
+
+    jwt.verify(token, "seu_segredo_secreto", (err, user) => {
+        if (err) return res.status(403).json({ error: "Token inválido!" });
+        req.user = user;  // Adiciona os dados do usuário à requisição
+        next();
+    });
+};
+
+// Middleware para verificar permissões
+const verificarPermissao = (cargosPermitidos) => {
+    return (req, res, next) => {
+        const { cargo } = req.user; // Pegando o cargo do usuário autenticado
+
+        if (!cargosPermitidos.includes(cargo)) {
+            return res.status(403).json({ error: "Acesso negado! Você não tem permissão para esta ação." });
+        }
+
+        next();
+    };
+};
 
 // Rota para cadastrar um novo usuário
 // app.post('/usuarios', verificarPermissao(["gerente"]), async (req, res) => {
@@ -94,31 +120,33 @@ app.post('/usuarios', autenticarUsuario, verificarPermissao(["gerente"]), async 
 });
 
 
-async function verificarLogin(cpf, senhaDigitada) {
+app.post('/login', async (req, res) => {
+    const { cpf, senha } = req.body;
+
     try {
-        const query = "SELECT cpf, senha, cargo FROM usuario WHERE cpf = $1";
-        const resultado = await pool.query(query, [cpf]);
+        // Buscar o usuário pelo CPF
+        const resultado = await pool.query("SELECT senha, cargo FROM usuario WHERE cpf = $1", [cpf]);
 
         if (resultado.rows.length === 0) {
-            return { sucesso: false, mensagem: "Usuário não encontrado" };
+            return res.status(401).json({ sucesso: false, mensagem: "Usuário não encontrado" });
         }
 
-        const { senha, cargo } = resultado.rows[0];
-        const senhaCorreta = await bcrypt.compare(senhaDigitada, senha);
+        const senhaHash = resultado.rows[0].senha;
+        const senhaCorreta = await bcrypt.compare(senha, senhaHash);
 
-        if (senhaCorreta) {
-            // Gerar token JWT
-            const token = jwt.sign({ cpf, cargo }, "seu_segredo_secreto", { expiresIn: "8h" });
-
-            return { sucesso: true, token };
-        } else {
-            return { sucesso: false, mensagem: "Senha incorreta" };
+        if (!senhaCorreta) {
+            return res.status(401).json({ sucesso: false, mensagem: "Senha incorreta" });
         }
+
+        // Login bem-sucedido, retornando o cargo do usuário
+        return res.status(200).json({ sucesso: true, cargo: resultado.rows[0].cargo });
+
     } catch (error) {
-        console.error("Erro ao verificar login:", error);
-        return { sucesso: false, mensagem: "Erro interno no servidor" };
+        console.error("Erro no login:", error);
+        return res.status(500).json({ sucesso: false, mensagem: "Erro interno no servidor" });
     }
-}
+});
+
 
 app.post("/login", async (req, res) => {
     const { cpf, senha } = req.body;
@@ -177,6 +205,9 @@ app.post('/produtos', autenticarUsuario, verificarPermissao(["farmaceutico", "ge
             res.status(500).json({ error: 'Erro ao cadastrar o produto!' });
         }
     }
+    else {
+        return res.status(400).json({ error: 'Tipo de produto inválido! Use "medicamento" ou "produto".' });
+    }
 
 });
 
@@ -233,7 +264,7 @@ app.post('/vendas', autenticarUsuario, verificarPermissao(["operador", "gerente"
         }
 
         const produtoData = produtoResult.rows[0];
-        if (produtoData.quantidadeInt < quantidadeInt) {
+        if (produtoData.quantidade < quantidadeInt) {
             return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
         }
         // Registra a venda
@@ -298,31 +329,7 @@ app.get('/receitamensal', autenticarUsuario, verificarPermissao(["gerente"]), as
     }
 });
 
-const autenticarUsuario = (req, res, next) => {
-    const token = req.headers.authorization;
-    if (!token) {
-        return res.status(401).json({ error: "Acesso não autorizado!" });
-    }
 
-    jwt.verify(token, "seu_segredo_secreto", (err, user) => {
-        if (err) return res.status(403).json({ error: "Token inválido!" });
-        req.user = user;  // Adiciona os dados do usuário à requisição
-        next();
-    });
-};
-
-// Middleware para verificar permissões
-const verificarPermissao = (cargosPermitidos) => {
-    return (req, res, next) => {
-        const { cargo } = req.user; // Pegando o cargo do usuário autenticado
-
-        if (!cargosPermitidos.includes(cargo)) {
-            return res.status(403).json({ error: "Acesso negado! Você não tem permissão para esta ação." });
-        }
-
-        next();
-    };
-};
 
 
 // Iniciar o servidor na porta 8080
