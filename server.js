@@ -45,6 +45,8 @@ const autenticarUsuario = (req, res, next) => {
 const verificarPermissao = (cargosPermitidos) => {
     return (req, res, next) => {
         const { cargo } = req.user; // Pegando o cargo do usuário autenticado
+ 
+        console.log(cargo);
 
         if (!cargosPermitidos.includes(cargo)) {
             return res.status(403).json({ error: "Acesso negado! Você não tem permissão para esta ação." });
@@ -123,6 +125,8 @@ app.post('/usuarios', autenticarUsuario, verificarPermissao(["gerente"]), async 
 app.post('/login', async (req, res) => {
     const { cpf, senha } = req.body;
 
+    console.log('Requisição de login recebida:', req.body); 
+
     try {
         // Buscar o usuário pelo CPF
         const resultado = await pool.query("SELECT senha, cargo FROM usuario WHERE cpf = $1", [cpf]);
@@ -148,21 +152,21 @@ app.post('/login', async (req, res) => {
 });
 
 
-app.post("/login", async (req, res) => {
-    const { cpf, senha } = req.body;
+// app.post("/login", async (req, res) => {
+//     const { cpf, senha } = req.body;
 
-    if (!cpf || !senha) {
-        return res.status(400).json({ error: "CPF e senha são obrigatórios!" });
-    }
+//     if (!cpf || !senha) {
+//         return res.status(400).json({ error: "CPF e senha são obrigatórios!" });
+//     }
 
-    const resultado = await verificarLogin(cpf, senha);
+//     const resultado = await verificarLogin(cpf, senha);
 
-    if (resultado.sucesso) {
-        res.status(200).json({ token: resultado.token });
-    } else {
-        res.status(401).json({ error: resultado.mensagem });
-    }
-});
+//     if (resultado.sucesso) {
+//         res.status(200).json({ token: resultado.token });
+//     } else {
+//         res.status(401).json({ error: resultado.mensagem });
+//     }
+// });
 
 
 // Rota para cadastrar um novo produto
@@ -264,7 +268,7 @@ app.post('/vendas', autenticarUsuario, verificarPermissao(["operador", "gerente"
         }
 
         const produtoData = produtoResult.rows[0];
-        if (produtoData.quantidade < quantidadeInt) {
+        if (produtoData.quantidadeInt < quantidadeInt) {
             return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
         }
         // Registra a venda

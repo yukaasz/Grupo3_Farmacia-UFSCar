@@ -1,3 +1,11 @@
+function atualizarCampos() { 
+    const isMedicamento = document.getElementById('radio_medicamento').checked;
+
+    document.getElementById('composto_ativo').disabled = !isMedicamento;
+    document.getElementById('dosagem_numero').disabled = !isMedicamento;
+    document.getElementById('dosagem_unidade').disabled = !isMedicamento;
+}
+
 async function cadastrarProduto(e) {
     e.preventDefault();
 

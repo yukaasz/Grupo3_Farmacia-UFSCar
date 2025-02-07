@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Farmácia</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styleLogin.css">
 </head>
 <body>
+    <script src="scriptLogin.js"></script>
     <div class="login-container">
         <h2>Login</h2>
-        <form id="loginForm">
+        <form id="loginForm" onsubmit=" return fazerLogin(event);">
             <label for="cpf">CPF:</label>
             <input type="text" id="cpf" name="cpf" required>
 

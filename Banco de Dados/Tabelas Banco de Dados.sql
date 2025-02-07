@@ -2,7 +2,7 @@ CREATE TABLE Usuario (
 	CPF			  		VARCHAR(11) PRIMARY KEY, CONSTRAINT cpf_valido CHECK (CPF ~ '^[0-9]{11}$'),
     nome		  		varchar(100) NOT NULL,
     cargo	            varchar(100) NOT NULL,
-	senha				varchar(50)
+	senha				varchar(100)
 );
 
 CREATE TABLE Produto (
