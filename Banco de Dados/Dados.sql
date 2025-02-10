@@ -10,3 +10,7 @@ INSERT INTO Medicamento (nome, quantidade, preco_unitario, validade, dosagem, co
 INSERT INTO Medicamento (nome, quantidade, preco_unitario, validade, dosagem, composto_ativo) VALUES ('Dulcolax', 30, 18.30, '2025-06-07', '5 mg', 'Bisacodil');
 INSERT INTO Medicamento (nome, quantidade, preco_unitario, validade, dosagem, composto_ativo) VALUES ('Nasonex', 40, 46.79, '2026-09-21', '50 mcg', 'Furoato de Mometasona');
 
+-- Para logar
+-- cpf: 12345678901 
+-- senha: 12345
+INSERT INTO Usuario (cpf, nome, cargo, senha) VALUES ('12345678901', 'Giovanni', 'gerente', '$2b$10$fgGB5aKMU04CaKlsCi1sWus4G.uFSkmp4jxSZd5lAo4r8a8hXpdI6'); 
