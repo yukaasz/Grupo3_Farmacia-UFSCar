@@ -51,7 +51,7 @@ h1 {
     outline: none;
 }
 
-.filtro button {
+button {
     padding: 12px 20px;
     background-color: rgb(156, 29, 156);
     color: #fff;

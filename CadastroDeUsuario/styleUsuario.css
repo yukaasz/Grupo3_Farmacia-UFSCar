@@ -94,3 +94,7 @@ button:hover {
     margin-right: 10px;
     color: rgb(156, 29, 156);
 }
+
+.input_cinza {
+    background-color: lightgrey;
+}

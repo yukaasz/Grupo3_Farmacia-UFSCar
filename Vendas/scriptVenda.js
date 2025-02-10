@@ -50,12 +50,6 @@ async function realizarVenda(e) {
         const produtoId = selectProduto.value.split(" - ")[0]; // Obtém apenas o ID do produto
         const quantidade = document.getElementById("quantidade").value;
 
-        // Validação da quantidade
-        if (isNaN(quantidade) || quantidade <= 0) {
-            alert("Por favor, insira uma quantidade válida!");
-            return;
-        }
-
         if (!produtoId) {
             alert("Por favor, selecione um produto!");
             return;
@@ -85,4 +79,4 @@ if (typeof window !== "undefined") {
     window.onload = carregarProdutos;
 }
 // Exporta a função para ser usada em outros arquivos
-module.exports = { realizarVenda, carregarProdutos };   
+module.exports = { realizarVenda, carregarProdutos };
