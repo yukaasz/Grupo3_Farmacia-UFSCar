@@ -3,7 +3,7 @@ const { JSDOM } = require('jsdom');
 // Mock global alert
 global.alert = jest.fn();
 
-const { cadastrarUsuario } = require('../CadastrodeUsuario/scriptUsuario');
+const { cadastrarUsuario } = require('../CadastroDeUsuario/scriptUsuario');
 
 describe('Teste da função cadastrarUsuario', () => {
     let dom;
@@ -70,6 +70,42 @@ describe('Teste da função cadastrarUsuario', () => {
             }),
         });
         expect(global.alert).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
+    });
+
+    it('deve exibir erro se o CPF for curto demais', async () => {
+        document.getElementById('cpf').value = '12345';
+        document.getElementById('nome').value = 'Fulano';
+        document.getElementById('cargo').value = 'gerente';
+        document.getElementById('senha').value = '1234';
+
+        const event = { preventDefault: jest.fn() };
+        await cadastrarUsuario(event);
+
+        expect(global.alert).toHaveBeenCalledWith('O CPF deve conter exatamente 11 dígitos!');
+    });
+
+    it('deve exibir erro se algum campo obrigatório estiver vazio', async () => {
+        document.getElementById('cpf').value = '';
+        document.getElementById('nome').value = '';
+        document.getElementById('cargo').value = '';
+        document.getElementById('senha').value = '';
+
+        const event = { preventDefault: jest.fn() };
+        await cadastrarUsuario(event);
+
+        expect(global.alert).toHaveBeenCalledWith('Todos os campos são obrigatórios!');
+    });
+
+    it('deve exibir erro se o cargo for inválido', async () => {
+        document.getElementById('cpf').value = '12345678901';
+        document.getElementById('nome').value = 'Fulano';
+        document.getElementById('cargo').value = 'CEO';
+        document.getElementById('senha').value = '1234';
+
+        const event = { preventDefault: jest.fn() };
+        await cadastrarUsuario(event);
+
+        expect(global.alert).toHaveBeenCalledWith('Cargo inválido! Escolha entre: Gerente, Operador de Caixa ou Farmacêutico.');
     });
 
     it('deve exibir uma mensagem de erro quando o cadastro falhar', async () => {

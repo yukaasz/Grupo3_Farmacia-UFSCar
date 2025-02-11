@@ -61,7 +61,6 @@ async function realizarVenda(e) {
             return;
         }   
 
-        // Agora, processa a venda com o ID do produto diretamente
         const response = await fetch("http://localhost:8080/vendas", {
             method: "POST",
             headers: {

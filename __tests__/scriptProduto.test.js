@@ -47,7 +47,53 @@ describe('Teste da função cadastrarProduto', () => {
         jest.clearAllMocks();
     });
 
-    it('deve exibir uma mensagem de sucesso quando o cadastro for realizado com sucesso', async () => {
+    it('deve exibir uma mensagem de sucesso quando o cadastro de produto for realizado com sucesso', async () => {
+        // Mock da resposta do fetch
+        global.fetch.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({}),
+        });
+
+        const event = {
+            preventDefault: jest.fn(),
+        };
+
+        // Simula a seleção do radio button "medicamento"
+        document.getElementById('radio_produto').checked = true;
+
+        document.getElementById('nome').value = 'Fralda Huggies';
+        document.getElementById('quantidade').value = '200';
+        document.getElementById('preco_unitario').value = '100.50';
+        document.getElementById('validade').value = '2029-12-11';
+        document.getElementById('dosagem_numero').value = ''; // Produto não tem dosagem
+        document.getElementById('dosagem_unidade').value = ''; // Produto não tem dosagem
+        document.getElementById('composto_ativo').value = ''; // Produto não tem composto ativo
+        document.getElementById('radio_produto').checked = true;
+
+
+        await cadastrarProduto(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(global.fetch).toHaveBeenCalledWith('http://localhost:8080/produtos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nome: 'Fralda Huggies',
+                quantidade: '200',
+                preco_unitario: '100.50',
+                validade: '2029-12-11',
+                dosagem: null,
+                composto_ativo: null,
+                radio: 'produto',
+            }),
+        });
+        expect(global.alert).toHaveBeenCalledWith('Produto cadastrado com sucesso!');
+    });
+
+    it('deve exibir uma mensagem de sucesso quando o cadastro de medicamento for realizado com sucesso', async () => {
         // Mock da resposta do fetch
         global.fetch.mockResolvedValueOnce({
             ok: true,
@@ -70,6 +116,7 @@ describe('Teste da função cadastrarProduto', () => {
             headers: {
                 'Content-Type': 'application/json',
             },
+    
             body: JSON.stringify({
                 nome: 'Paracetamol',
                 quantidade: '100',
@@ -120,5 +167,23 @@ describe('Teste da função cadastrarProduto', () => {
         expect(event.preventDefault).toHaveBeenCalled();
         expect(global.fetch).toHaveBeenCalled();
         expect(global.alert).toHaveBeenCalledWith('Erro inesperado ao cadastrar o produto. Por favor, tente novamente mais tarde.');
+    });
+
+    it('deve exibir uma mensagem de erro quando a quantidade for menor que zero', async () => {
+        const event = {
+            preventDefault: jest.fn(),
+        };
+    
+        // Simula a seleção do radio button "produto"
+        document.getElementById('radio_produto').checked = true;
+    
+        // Define a quantidade como um valor negativo
+        document.getElementById('quantidade').value = '-10';
+    
+        await cadastrarProduto(event);
+    
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(global.fetch).not.toHaveBeenCalled(); // O fetch não deve ser chamado
+        expect(global.alert).toHaveBeenCalledWith('A quantidade não pode ser menor que zero!');
     });
 });

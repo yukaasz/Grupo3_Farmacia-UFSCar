@@ -5,7 +5,6 @@ async function fazerLogin(event) {
     const senha = document.getElementById("senha").value;
     const errorMessage = document.getElementById("error-message");
     errorMessage.textContent = "";
-    console.log("ok");
     
     try {
         const response = await fetch("http://localhost:8080/login", {
@@ -31,3 +30,5 @@ async function fazerLogin(event) {
 }
 
 
+// Exporta a função para ser usada em outros arquivos
+module.exports = { fazerLogin };

@@ -82,15 +82,12 @@ app.post('/usuarios', async (req, res) => {
 	            return res.status(401).json({ sucesso: false, mensagem: "Senha incorreta" });
 	        }
 	
-         // Gera o token JWT
 	        const token = jwt.sign(
 	            { cpf: cpf, cargo: resultado.rows[0].cargo },
-	            "chave", // Use a mesma chave do middleware
+	            "chave", 
 	            { expiresIn: "1h" }
 	        );  
 	        
-	
-	        // Envie o token para o frontend
 	        return res.status(200).json({ 
 	            sucesso: true, 
 	            cargo: resultado.rows[0].cargo,
@@ -268,9 +265,6 @@ app.get('/receitamensal', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar as vendas!' });
     }
 });
-
-
-
 
 // Iniciar o servidor na porta 8080
 app.listen(8080, () => {

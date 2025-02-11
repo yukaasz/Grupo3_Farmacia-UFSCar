@@ -7,6 +7,23 @@ async function cadastrarUsuario(e) {
         const cargo = document.getElementById('cargo').value;
         const senha = document.getElementById('senha').value;
 
+        const cargosValidos = ['gerente', 'operador de caixa', 'farmacêutico'];
+       
+        if (!cpf || !nome || !senha) {
+            alert('Todos os campos são obrigatórios!');
+            return;
+        }
+
+        if (!cargosValidos.includes(cargo)) {
+            alert('Cargo inválido! Escolha entre: Gerente, Operador de Caixa ou Farmacêutico.');
+            return;
+        }
+
+        if (cpf.length !== 11) {
+            alert('O CPF deve conter exatamente 11 dígitos!');
+            return;
+        }
+
         const response = await fetch('http://localhost:8080/usuarios', {
             method: 'POST',
             headers: {

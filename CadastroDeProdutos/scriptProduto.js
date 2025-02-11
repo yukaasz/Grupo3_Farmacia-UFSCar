@@ -35,9 +35,17 @@ async function cadastrarProduto(e) {
         const quantidade = document.getElementById('quantidade').value;
         const preco_unitario = document.getElementById('preco_unitario').value;
         const validade = document.getElementById('validade').value;
-        const dosagem = document.getElementById('dosagem_numero').value + ' ' + document.getElementById('dosagem_unidade').value;
-        const composto_ativo = document.getElementById('composto_ativo').value;
+        const dosagemNumero = document.getElementById('dosagem_numero').value;
+        const dosagemUnidade = document.getElementById('dosagem_unidade').value;
+        const dosagem = dosagemNumero ? `${dosagemNumero} ${dosagemUnidade}` : null;
+        const composto_ativo = document.getElementById('composto_ativo').value || null;
         let radio;
+
+        // Validação da quantidade
+    if (quantidade < 0) {
+        alert('A quantidade não pode ser menor que zero!');
+        return; // Interrompe a execução da função
+    }
 
         if (document.getElementById('radio_medicamento').checked) {
             radio = document.getElementById('radio_medicamento').value;

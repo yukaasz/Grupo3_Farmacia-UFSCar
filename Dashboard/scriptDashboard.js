@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+function verificarPermissoes() {
     let cargo = localStorage.getItem("cargoUsuario"); // Recupera o cargo salvo
 
     if (!cargo) {
@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", function() {
         "operador": ["Registrar Venda", "Histórico de Transações"]
     };
 
+    if (!permissoes[cargo]) {
+        alert("Erro: Cargo inválido! Faça login novamente.");
+        window.location.href = "../Login/login.html"; // Redireciona para login
+        return;
+    }
+
     // Oculta os cards que o usuário não pode acessar
     document.querySelectorAll(".card").forEach(card => {
         let titulo = card.querySelector("h2").textContent.trim();
@@ -21,4 +27,11 @@ document.addEventListener("DOMContentLoaded", function() {
             card.style.display = "none"; // Esconde o card
         }
     });
-});
+}
+
+// Chamada automática ao carregar a página
+// document.addEventListener("DOMContentLoaded", verificarPermissoes);
+
+
+// Exporta a função para ser usada em outros arquivos
+module.exports = { verificarPermissoes };
