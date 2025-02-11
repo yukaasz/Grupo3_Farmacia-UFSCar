@@ -203,19 +203,20 @@ app.post('/vendas', async (req, res) => {
         }
 
         const produtoData = produtoResult.rows[0];
-        if (produtoData.quantidadeInt < quantidadeInt) {
+        var produto_qtd = parseInt(produtoData.quantidade, 10);
+        if (produto_qtd < quantidadeInt) {
             return res.status(400).json({ error: 'Quantidade insuficiente no estoque!' });
         }
         // Registra a venda
         const vendaResult = await pool.query(
             'INSERT INTO venda (produto, quantidade) VALUES ($1, $2) RETURNING *',
-            [produtoId, quantidadeInt]
+            [produtoId, quantidade]
         );
 
         res.status(201).json(vendaResult.rows[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Erro ao processar a venda!' });
+        res.status(500).json({ error: 'Erro ao registrar a venda!' });
     }
 });
 

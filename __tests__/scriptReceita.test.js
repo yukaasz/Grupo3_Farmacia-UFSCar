@@ -3,7 +3,7 @@ const { JSDOM } = require('jsdom');
 // Mock global alert
 global.alert = jest.fn();
 
-const { buscarVendas, atualizarTabela } = require('../Vendas/scriptVenda'); 
+const { buscarVendas, atualizarTabela } = require('../Vendas/scriptReceita'); 
 
 describe('Testes para buscarVendas e atualizarTabela', () => {
     let dom;
@@ -122,7 +122,7 @@ describe('Testes para buscarVendas e atualizarTabela', () => {
             // Mock do alert para evitar que ele apareça no terminal
             global.alert = jest.fn();
 
-            // Chamar a função que deve ser testada sem selecionar mês e ano
+            // Chamar a função que deve ser testada sem selecionar mês e ano 
             await buscarVendas();
 
             // Verificar se o alerta de erro foi chamado

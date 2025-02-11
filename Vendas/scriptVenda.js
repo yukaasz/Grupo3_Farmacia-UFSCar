@@ -49,11 +49,17 @@ async function realizarVenda(e) {
         const selectProduto = document.getElementById("produto");
         const produtoId = selectProduto.value.split(" - ")[0]; // Obtém apenas o ID do produto
         const quantidade = document.getElementById("quantidade").value;
+        const quantidadeInt = parseInt(quantidade);
 
         if (!produtoId) {
             alert("Por favor, selecione um produto!");
             return;
         }
+
+        if (quantidadeInt <= 0) {
+            alert('Por favor, insira uma quantidade válida!');
+            return;
+        }   
 
         // Agora, processa a venda com o ID do produto diretamente
         const response = await fetch("http://localhost:8080/vendas", {
@@ -63,6 +69,7 @@ async function realizarVenda(e) {
             },
             body: JSON.stringify({ produtoId, quantidade }),
         });
+
     
         if (response.ok) {
             alert("Venda registrada com sucesso!");

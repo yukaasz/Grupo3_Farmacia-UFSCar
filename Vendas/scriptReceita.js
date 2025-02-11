@@ -55,3 +55,6 @@ function atualizarTabela(vendas) {
         tbody.appendChild(row);
     });
 }
+
+module.exports = { buscarVendas, atualizarTabela };
+

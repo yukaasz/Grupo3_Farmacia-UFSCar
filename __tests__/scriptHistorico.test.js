@@ -14,6 +14,11 @@ describe('carregarHistorico', () => {
         global.document = document;
         global.window = dom.window;
 
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => [ /* dados mockados */ ],
+        });
+
         // Mock do console.error para ocultar logs de erro
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => {});
     });

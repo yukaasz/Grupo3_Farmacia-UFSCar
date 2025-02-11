@@ -14,6 +14,11 @@ describe('carregarEstoque', () => {
         global.document = document;
         global.window = dom.window;
 
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => [ /* dados mockados */ ],
+        });
+
         // Mock do console.error para evitar poluição do console
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => {});
     });
