@@ -7,7 +7,7 @@ async function cadastrarUsuario(e) {
         const cargo = document.getElementById('cargo').value;
         const senha = document.getElementById('senha').value;
 
-        const cargosValidos = ['gerente', 'operador de caixa', 'farmacêutico'];
+        const cargosValidos = ['gerente', 'operador', 'farmaceutico'];
        
         if (!cpf || !nome || !senha) {
             alert('Todos os campos são obrigatórios!');

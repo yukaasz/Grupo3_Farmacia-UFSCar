@@ -216,11 +216,6 @@ describe('Testes para Processamento de Vendas', () => {
             // Verificar se o alerta de erro foi chamado
             await new Promise(resolve => setTimeout(resolve, 0)); // Esperar a execução assíncrona
             expect(global.alert).toHaveBeenCalledWith('Erro ao registrar a venda!');
-
-            // expect(global.alert).toHaveBeenCalledWith('Estoque insuficiente para a quantidade desejada!');
-            // Verificar se o alerta de erro foi chamado
-            // await new Promise(resolve => setTimeout(resolve, 0)); // Esperar a execução assíncrona
-            // expect(global.alert).toHaveBeenCalledWith('Estoque insuficiente para a quantidade desejada!');
         });
     });
 });
